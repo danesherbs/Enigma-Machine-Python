@@ -10,11 +10,10 @@ from enigma import *
 ########
 
 def test_utils_read_rotors_1():
-    assert read_rotors('rotors/I.rot') == (
-        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 
-        15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 0] )
+    assert read_rotors('rotors/I.rot') == [1] * 26
 
 def test_utils_read_rotors_2():
+    print read_rotors('rotors/V.rot')
     assert read_rotors('rotors/V.rot') == (
         [3, 23, 25, 1, 12, 14, 8, 16, 9, 20, 5, 4, 17, 
         21, 6, 18, 2, 11, 22, 24, 13, 19, 0, 10, 7, 15] )
