@@ -85,7 +85,7 @@ def test_rotor_decode_2():
 
 def test_rotor_decode_3():
     rotor = Rotor('rotors/IV.rot')
-    assert rotor.decode(18) == 8
+    assert rotor.decode(18) == 0
 
 def test_rotor_decode_opposite_to_encode_1():
     rotor = Rotor('rotors/III.rot')
@@ -96,9 +96,14 @@ def test_rotor_decode_opposite_to_encode_2():
     assert rotor.decode(rotor.encode(16)) == 16
 
 def test_rotor_rotation_changes_rotor_config_file():
-    rotor = Rotor('rotors/I.rot')
+    rotor = Rotor('rotors/V.rot')
     rotor.rotate()
-    assert rotor.config == range(2,LETTERS_IN_ALPHABET)+[0,1]
+    assert rotor.config_encode == (
+        [22, 23, 24, 8, 9, 2, 9, 1, 11, 21, 19, 5, 8, 
+        18, 3, 12, 20, 4, 5, 19, 24, 4, 13, 9, 16, 3] )
+    assert rotor.config_decode == (
+        [2, 14, 23, 7, 5, 8, 17, 24, 25, 13, 6, 18, 7, 
+        17, 10, 17, 21, 23, 2, 15, 18, 22, 4, 21, 3, 22] )
 
 def test_rotor_rotates_next_after_full_rotation():
     rotor = Rotor('rotors/I.rot')
@@ -185,15 +190,15 @@ def test_enigma_encodes_message_correctly_with_one_rotor_basic_2():
 
 # Complex rotor tests
 def test_enigma_encodes_message_correctly_with_one_rotor_complex_single_letter():
-    enigma = EnigmaMachine('rotors/V.rot', 'plugboards/null.pb')
+    enigma = EnigmaMachine('rotors/III.rot', 'plugboards/null.pb')
     assert enigma.encode_message('A') == 'L'
 
 def test_enigma_encodes_message_correctly_with_one_rotor_complex_1():
-    enigma = EnigmaMachine('rotors/V.rot', 'plugboards/null.pb')
+    enigma = EnigmaMachine('rotors/III.rot', 'plugboards/null.pb')
     assert enigma.encode_message('AAAAAAAAAAAAAAAAAAAAAAAAAA') == 'LLFORJEVOKWPPKRFJMGQVJMQUR'
 
 def test_enigma_encodes_message_correctly_with_one_rotor_complex_2():
-    enigma = EnigmaMachine('rotors/V.rot', 'plugboards/null.pb')
+    enigma = EnigmaMachine('rotors/IV.rot', 'plugboards/null.pb')
     assert enigma.encode_message('DDDDDDDDDDDDDDDDDDDDDDDDDD') == 'KYRVLIQWULYGVOAGPVAQGLIASM'
 
 def test_enigma_encodes_message_correctly_with_one_rotor_complex_3():
@@ -205,9 +210,24 @@ def test_enigma_encodes_message_with_rotor_cascade_1():
     enigma = EnigmaMachine('rotors/I.rot', 'rotors/II.rot', 'plugboards/null.pb')
     assert enigma.encode_message('A' * 52) == 'L' * 26 + 'P' * 26
 
+def test_enigma_encodes_message_with_rotor_cascade_2():
+    enigma = EnigmaMachine('rotors/I.rot', 'rotors/II.rot', 'plugboards/IV.pb')
+    assert enigma.encode_message('A' * 52) == 'Z' * 26 + 'X' * 26
 
+def test_enigma_encodes_message_with_rotor_cascade_3():
+    enigma = EnigmaMachine('rotors/II.rot', 'rotors/II.rot', 'plugboards/null.pb')
+    assert enigma.encode_message('ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ') \
+                    == 'NSPURWTYVAXCZEBGDIFKHMJOLQROTQVSXUZWBYDAFCHEJGLINKPM'
 
+def test_enigma_encodes_message_with_rotor_cascade_4():
+    enigma = EnigmaMachine('rotors/II.rot', 'rotors/II.rot', 'plugboards/III.pb')
+    assert enigma.encode_message('ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ') \
+                    == 'NQLWRUTCKVIYUEBGFXDKMJHRPSROPSVQIWGZBCQAFYMEHGNXLVTJ'
 
+def test_enigma_encodes_message_with_rotor_cascade_5():
+    enigma = EnigmaMachine('rotors/VI.rot', 'rotors/IV.rot', 'plugboards/II.pb')
+    assert enigma.encode_message('ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ') \
+                    == 'MGDSBKVCZTGFAGSJKPFDIZGIGMFHLWODQOXBJBWIPZHQMCZUDJSN'
 
 
 

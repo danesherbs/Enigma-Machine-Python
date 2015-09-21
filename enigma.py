@@ -12,14 +12,14 @@ class EnigmaMachine(Encoder):
         for rotor_path in configs[:-1]:
             self.rotors.append(Rotor(rotor_path))
 
-        self.offsets = [0]*len(self.rotors)  # rotor offsets
         self.reflector = Reflector(13)
 
     # DEBUGGING
     def print_rotors(self):
         rotor_num = 1
         for rotor in self.rotors:
-            print "Rotor" + str(rotor_num) + ":\t" + str(self.rotors[rotor_num-1].config)
+            print "Rotor" + str(rotor_num) + " encode:\t" + str(self.rotors[rotor_num-1].config_encode)
+            print "Rotor" + str(rotor_num) + " decode:\t" + str(self.rotors[rotor_num-1].config_decode)
             rotor_num += 1
         print ""
     # DEBUGGING
@@ -38,7 +38,7 @@ class EnigmaMachine(Encoder):
         print "After plugboard:\t", output, chr(output+ord('A'))
 
         if len(self.rotors) > 0:  # check for rotors
-            print "\t", range(26)
+            print "\t\t", range(26)
             self.print_rotors()
             print "ROTATE!"
             print ""
@@ -57,8 +57,6 @@ class EnigmaMachine(Encoder):
         return self.encode(output)  # symmetric operation
 
     def rotate_rotors(self, rotor_i):
-        if rotor_i != len(self.rotors)-1:  # offset for last rotor meaningless
-            self.offsets[rotor_i] = (self.offsets[rotor_i] + 1) % 26
         if self.rotors[rotor_i].rotate():
             rotor_i += 1
             if rotor_i < len(self.rotors):
@@ -67,21 +65,12 @@ class EnigmaMachine(Encoder):
     def pass_rotors(self, transformer, input):
         direc = -1 if transformer == 'decode' else 1
         for rotor_num, rotor in enumerate(self.rotors[::direc]):
-            offset = self.offsets[rotor_num]
             # get output of current rotor
             if transformer == 'encode':
-                input = rotor.encode((input - offset) % 26)
+                input = rotor.encode(input)
             else:  # decode
-                input = rotor.decode((input - offset) % 26) 
+                input = rotor.decode(input) 
         return input
-
-
-# if __name__ == '__main__':
-
-#     enigma = EnigmaMachine('rotors/I.rot', 'plugboards/null.pb')
-#     enigma.encode('A')
-
-
 
 
 
