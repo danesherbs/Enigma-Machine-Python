@@ -13,38 +13,16 @@ class EnigmaMachine(Encoder):
             self.rotors.append(Rotor(rotor_path))
 
         self.reflector = Reflector(13)
-
-    # DEBUGGING
-    def print_rotors(self):
-        rotor_num = 1
-        for rotor in self.rotors:
-            print "Rotor" + str(rotor_num) + " encode:\t" + str(self.rotors[rotor_num-1].config_encode)
-            print "Rotor" + str(rotor_num) + " decode:\t" + str(self.rotors[rotor_num-1].config_decode)
-            rotor_num += 1
-        print ""
-    # DEBUGGING
-
     def encode(self, input):
         input = ord(input) - ord('A')  # A -> 0, ..., Z -> 25
         output = self.plugboard.encode(input)
-        print "After plugboard:\t", output, chr(output+ord('A'))
         output = self.pass_rotors('encode', output)
-        print "After rotors:\t\t", output, chr(output+ord('A'))
         output = self.reflector.encode(output)
-        print "After reflector:\t", output, chr(output+ord('A'))
         output = self.pass_rotors('decode', output)
-        print "After rotors:\t\t", output, chr(output+ord('A'))
         output = self.plugboard.decode(output)
-        print "After plugboard:\t", output, chr(output+ord('A'))
 
         if len(self.rotors) > 0:  # check for rotors
-            print "\t\t", range(26)
-            self.print_rotors()
-            print "ROTATE!"
-            print ""
             self.rotate_rotors(0)  # rotate necessary rotors
-            self.print_rotors()
-
         return chr(output + ord('A'))
 
     def encode_message(self, message):
