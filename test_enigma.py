@@ -10,13 +10,14 @@ from enigma import *
 ########
 
 def test_utils_read_rotors_1():
-    assert read_rotors('rotors/I.rot') == [1] * 26
+    assert read_rotors('rotors/I.rot') == ([1] * 26, [25] * 26)
 
 def test_utils_read_rotors_2():
-    print read_rotors('rotors/V.rot')
     assert read_rotors('rotors/V.rot') == (
-        [3, 23, 25, 1, 12, 14, 8, 16, 9, 20, 5, 4, 17, 
-        21, 6, 18, 2, 11, 22, 24, 13, 19, 0, 10, 7, 15] )
+        [3, 22, 23, 24, 8, 9, 2, 9, 1, 11, 21, 19, 5,
+         8, 18, 3, 12, 20, 4, 5, 19, 24, 4, 13, 9, 16],
+        [22, 2, 14, 23, 7, 5, 8, 17, 24, 25, 13, 6, 18,
+         7, 17, 10, 17, 21, 23, 2, 15, 18, 22, 4, 21, 3] )
 
 def test_utils_read_plugboard1():
     assert read_plugboards('plugboards/I.pb') == [[25, 8]]
@@ -56,12 +57,14 @@ def test_plugboard_decode_1():
 # ROTORS
 #########
 
-def test_rotor_test_file_has_26_elements():
-    assert len(read_rotors('rotors/I.rot')) == LETTERS_IN_ALPHABET
+def test_rotor_read_rotor_returns_two_lists_of_len_26():
+    assert len(read_rotors('rotors/I.rot')) == 2
+    assert len(read_rotors('rotors/I.rot')[0]) == LETTERS_IN_ALPHABET
+    assert len(read_rotors('rotors/I.rot')[1]) == LETTERS_IN_ALPHABET
 
 def test_rotor_encode_single_rotor_1():
     rotor = Rotor('rotors/I.rot')
-    assert rotor.encode(0) == 1  # A -> B
+    assert rotor.encode(0) == 1  # moves one position clockwise
 
 def test_rotor_encode_single_rotor_2():
     rotor = Rotor('rotors/I.rot')
@@ -82,7 +85,7 @@ def test_rotor_decode_2():
 
 def test_rotor_decode_3():
     rotor = Rotor('rotors/IV.rot')
-    assert rotor.decode(18) == 0  # B -> A
+    assert rotor.decode(18) == 8
 
 def test_rotor_decode_opposite_to_encode_1():
     rotor = Rotor('rotors/III.rot')
@@ -200,7 +203,7 @@ def test_enigma_encodes_message_correctly_with_one_rotor_complex_3():
 # Rotor cascade tests
 def test_enigma_encodes_message_with_rotor_cascade_1():
     enigma = EnigmaMachine('rotors/I.rot', 'rotors/II.rot', 'plugboards/null.pb')
-    assert enigma.encode_message('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') == 'LLLLLLLLLLLLLLLLLLLLLLLLLLPPPPPPPPPPPPPPPPPPPPPPPPPP'
+    assert enigma.encode_message('A' * 52) == 'L' * 26 + 'P' * 26
 
 
 
