@@ -16,4 +16,4 @@ class Plugboard(Encoder):
         return input  # input not swapped by plugboard
 
     def decode(self, output):
-        return self.encode(output)  # symmetric operation
+        return self.encode(output)  # reciprocal cipher

@@ -13,6 +13,7 @@ class EnigmaMachine(Encoder):
             self.rotors.append(Rotor(rotor_path))
 
         self.reflector = Reflector(13)
+
     def encode(self, input):
         input = ord(input) - ord('A')  # A -> 0, ..., Z -> 25
         output = self.plugboard.encode(input)
@@ -28,11 +29,14 @@ class EnigmaMachine(Encoder):
     def encode_message(self, message):
         encoded_message = ''
         for letter in message:
-            encoded_message += self.encode(letter)
+            if letter == ' ':
+                encoded_message += ' '
+            else:
+                encoded_message += self.encode(letter)
         return encoded_message
 
     def decode(self, output):
-        return self.encode(output)  # symmetric operation
+        return self.encode(output)  # reciprocal cipher
 
     def rotate_rotors(self, rotor_i):
         if self.rotors[rotor_i].rotate():
